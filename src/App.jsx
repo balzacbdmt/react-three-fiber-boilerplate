@@ -1,81 +1,30 @@
-import Polyhedron from './Polyhedron'
-import * as THREE from 'three'
-import { Stats, OrbitControls } from '@react-three/drei'
+import { Stats, OrbitControls, Circle, useGLTF, Stage } from '@react-three/drei'
 import { Canvas, useLoader } from '@react-three/fiber'
-import { useControls } from 'leva'
-import { useRef } from 'react'
-import Floor from './Floor'
-
-function Lights() {
-  const directionalRef = useRef()
-
-  useControls('Directional Light', {
-    intensity: {
-      value: 1,
-      min: 0,
-      max: 5,
-      step: 0.1,
-      onChange: (v) => {
-        directionalRef.current.intensity = v
-      }
-    },
-
-    position: {
-      x: 3.3,
-      y: 1.0,
-      z: 4.4,
-      onChange: (v) => {
-        directionalRef.current.position.copy(v)
-      }
-    }
-  })
-
-  return <directionalLight ref={directionalRef} castShadow />
-}
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader'
+import Truck from './Truck'
+import { Suspense } from 'react'
 
 export default function App() {
-  const texture = useLoader(THREE.TextureLoader, './img/metal.jpeg')
+  const gltf = useLoader(GLTFLoader, '/models/monkey.glb')
 
   return (
-    <Canvas camera={{ position: [4, 4, 1.5] }} shadows>
-      <Lights />
-      <Polyhedron
-        name="meshBasicMaterial"
-        position={[-3, 1, 0]}
-        material={new THREE.MeshBasicMaterial({ map: texture })}
+    <Canvas camera={{ position: [-0.5, 1, 2] }} shadows>
+      <directionalLight
+        position={[3.3, 1.0, 4.4]}
+        castShadow
+        intensity={Math.PI * 2}
       />
-      <Polyhedron
-        name="meshNormalMaterial"
-        position={[-1, 1, 0]}
-        material={
-          new THREE.MeshNormalMaterial({
-            flatShading: true
-          })
-        }
+      <primitive
+        object={gltf.scene}
+        position={[2, 1, 0]}
+        children-0-castShadow
       />
-      <Polyhedron
-        name="meshPhongMaterial"
-        position={[1, 1, 0]}
-        material={
-          new THREE.MeshPhongMaterial({
-            flatShading: true,
-            map: texture
-          })
-        }
-      />
-      <Polyhedron
-        name="meshStandardMaterial"
-        position={[3, 1, 0]}
-        material={
-          new THREE.MeshStandardMaterial({
-            flatShading: true,
-            map: texture
-          })
-        }
-      />
-      <Floor />
+      <Suspense fallback={null}>
+        <Stage preset="rembrandt" intensity={1} environment="city">
+          <Truck />
+        </Stage>
+      </Suspense>
       <OrbitControls target={[0, 1, 0]} />
-      <axesHelper args={[5]} />
       <Stats />
     </Canvas>
   )
