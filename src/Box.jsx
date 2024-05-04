@@ -1,25 +1,31 @@
+import { useRef, useState, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useRef, useState } from 'react'
+import * as THREE from 'three'
 
 export function Box(props) {
   const ref = useRef()
-  const [isRotating, setIsRotating] = useState(false)
+  const [count, setCount] = useState(0)
+  const geometry = useMemo(
+    () => [new THREE.BoxGeometry(), new THREE.SphereGeometry(0.785398)],
+    []
+  )
+
+  useEffect(() => {
+    console.log(ref.current.geometry.uuid)
+  })
 
   useFrame((_, delta) => {
-    if (isRotating) {
-      ref.current.rotation.x += 1 * delta
-      ref.current.rotation.y += 0.5 * delta
-    }
+    ref.current.rotation.x += delta
+    ref.current.rotation.y += 0.5 * delta
   })
 
   return (
     <mesh
       {...props}
       ref={ref}
-      onPointerDown={() => setIsRotating(true)}
-      onPointerUp={() => setIsRotating(false)}>
-      <boxGeometry />
-      <meshBasicMaterial color={0x00ff00} wireframe />
+      onPointerDown={() => setCount((count + 1) % 2)}
+      geometry={geometry[count]}>
+      <meshBasicMaterial color={'lime'} wireframe />
     </mesh>
   )
 }
