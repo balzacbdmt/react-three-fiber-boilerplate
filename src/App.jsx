@@ -7,6 +7,7 @@ import {
 import { Canvas, useLoader } from '@react-three/fiber'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader'
 import Truck from './Truck'
+import Korrigan from './Korrigan'
 import { Suspense } from 'react'
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
       <primitive object={gltf.scene} position={[0, 1, 0]} />
       <Suspense fallback={null}>
         <Truck />
+        <Korrigan position={[-2, 0, 0]} />
       </Suspense>
       <OrbitControls target={[0, 1, 0]} />
       <Stats />
