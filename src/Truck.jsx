@@ -10,13 +10,14 @@ export default function Model(props) {
   const { nodes, materials } = useGLTF(
     'https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/zombie-car/model.gltf'
   )
-  console.log(props);
+  const wood = useGLTF('/models/t_wood/wood.gltf')
+  
   return (
     <group ref={group} {...props} dispose={null}>
       <group scale={0.1}>
         <mesh
           geometry={nodes.Cylinder018_Cylinder007.geometry}
-          material={materials.Car}
+          material={wood.materials.wood_table_001}
         />
         <mesh
           geometry={nodes.Cylinder018_Cylinder007_1.geometry}
